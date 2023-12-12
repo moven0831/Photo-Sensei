@@ -9,4 +9,4 @@ export enum Ops {
     GRAYSCALE,
     CROP,
     RESIZE
-};
+}
