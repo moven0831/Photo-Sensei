@@ -4,3 +4,9 @@ export type Pixel = {
     g: number;
     b: number;
 };
+
+export enum Ops {
+    GRAYSCALE,
+    CROP,
+    RESIZE
+};
