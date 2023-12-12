@@ -1,4 +1,4 @@
-import sharp from 'sharp';
+const sharp = require('sharp');
 
 class ImageOperation {
   constructor() {
@@ -53,7 +53,13 @@ class ImageOperation {
       .extract({ left: 0, top: 0, width: 100, height: 100 })
       .toFile(outputPath);
   }
+  async convert(inputPath, outputPath) {
+    await sharp(inputPath)
+      .jpeg()
+      .toFile(outputPath);
+    
+  }
 }
 
-const image = new ImageOperation();
-image.crop('./src/assets/big.jpg', './src/assets/big-gray.jpg');
+// const image = new ImageOperation();
+// image.crop('./src/assets/big.jpg', './src/assets/big-gray.jpg');
