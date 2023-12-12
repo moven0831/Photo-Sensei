@@ -7,7 +7,6 @@ import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useContract from "../hooks/useContract.tsx";
 import { useState } from "react";
 import { Mina } from "o1js";
-import { ImageServices } from "../services/imageServices.ts";
 // const sendImage = async (image: File, operation: string, contract: any) => {
 //     const tx = await Mina.transaction(() => {
 //         // TODO: implement this
@@ -27,14 +26,17 @@ import { ImageServices } from "../services/imageServices.ts";
 //     return image;
 // };
 
-function prove(image: File) {
-    const imageServices = new ImageServices();
+async function prove(image: File) {
     // imageServices.crop(image, "", 100, 100);
-    const reader = new FileReader();
-    reader.readAsArrayBuffer(image);
-    reader.onloadend = () => {
-        console.log(reader.result);
-    };
+    fetch("http://localhost:3001/crop", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+        },
+        body: image,
+    })
+        .then((res) => res.json())
+        .then((res) => console.log(res));
 }
 
 export default function Home() {
@@ -56,7 +58,7 @@ export default function Home() {
                     onSubmit={async (e) => {
                         e.preventDefault();
                         console.log(image, operation);
-                        prove(image!);
+                        await prove(image!);
                     }}
                 >
                     <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
