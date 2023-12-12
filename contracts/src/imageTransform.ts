@@ -1,5 +1,4 @@
 import {
-  Field,
   SmartContract,
   state,
   State,
@@ -9,17 +8,25 @@ import {
   Provable,
   Bool,
 } from 'o1js';
-import { Pixel, Ops } from './pixel.js';
+import { Pixel} from './pixel.js';
 
 class zkPixel extends Struct({
   r: UInt32,
   g: UInt32,
   b: UInt32,
-}) {}
+}) {
+  static default() {
+    return new zkPixel({
+      r: UInt32.from(0),
+      g: UInt32.from(0),
+      b: UInt32.from(0),
+    });
+  }
+}
 
 // assume that the image is 100x100
 class Image extends Struct({
-  pixel: Provable.Array(Provable.Array(zkPixel, 100), 100),
+  pixel: Provable.Array(Provable.Array(zkPixel, 10), 10),
 }) {
   static from(value: Pixel[][]) {
     // map the Pixel[][] to a zkPixel[][]
@@ -37,8 +44,8 @@ class Image extends Struct({
 
   static equals(a: Image, b: Image) {
     // compare the pixels in the images size of 100x100
-    for (let i = 0; i < 100; i++) {
-      for (let j = 0; j < 100; j++) {
+    for (let i = 0; i < a.pixel.length; i++) {
+      for (let j = 0; j < a.pixel[i].length; j++) {
         if (
           !a.pixel[i][j].r.equals(b.pixel[i][j].r) ||
           !a.pixel[i][j].g.equals(b.pixel[i][j].g) ||
@@ -50,78 +57,37 @@ class Image extends Struct({
     }
     return true;
   }
-  static init() {
-    // init a new image with all pixels set to 0
-    const pixels = [];
-    for (let i = 0; i < 100; i++) {
-      const row = [];
-      for (let j = 0; j < 100; j++) {
-        row.push({ r: UInt32.from(0), g: UInt32.from(0), b: UInt32.from(0) });
-      }
-      pixels.push(row);
-    }
-    return new Image({ pixel: pixels });
-  }
 }
 
 export class ImageTransform extends SmartContract {
-  @state(Image) redactedImage = State<Image>();
   @state(Bool) isValid = State<Bool>();
 
   @method init() {
-    // const pixels = [];
-    // for (let i = 0; i < 100; i++) {
-    //   const row = [];
-    //   for (let j = 0; j < 100; j++) {
-    //     row.push({ r: UInt32.from(0), g: UInt32.from(0), b: UInt32.from(0) });
-    //   }
-    //   pixels.push(row);
-    // }
-    // this.redactedImage.set(pixels);
-    //TODO: set default image to all 0s
+    // initialize the redacted image to be all 0s
     this.isValid.set(Bool(false));
     super.init();
   }
 
-  // @method update(redactedImageInstance: Image) {
-  // this.redactedImage.set(redactedImageInstance);
-  // this.isValid.set(Bool(false));
-  // }
-  @method update(redactedImageInstance: Image) {
-    this.redactedImage.set(redactedImageInstance);
+  @method update() {
     this.isValid.set(Bool(false));
-    // this.checkOpsValid(originalImageInstance, ops);
   }
 
-  // @method checkOpsValid(originalImageInstance: Image, ops: Ops[]) {
-  //   let redactedImage = this.redactedImage.get();
-
-  //   // apply the ops to the original image
-  //   let originalImage = originalImageInstance;
-  //   for (const op of ops) {
-  //     if (op === Ops.GRAYSCALE) {
-  //       for (let i = 0; i < 100; i++) {
-  //         for (let j = 0; j < 100; j++) {
-  //           const gray = originalImage.pixel[i][j].r.mul(UInt32.from(30))
-  //             .add(originalImage.pixel[i][j].g.mul(UInt32.from(59)))
-  //             .add(originalImage.pixel[i][j].b.mul(UInt32.from(11)));
-
-  //           gray.equals(redactedImage.pixel[i][j].r.mul(UInt32.from(100)));
-  //         }
-  //       }
-  //     }
-  //     else if (op === Ops.CROP) {
-  //       // TODO
-  //     }
-  //     else if (op === Ops.RESIZE) {
-  //       // TODO
-  //     }
-  //     // TODO: implement the other ops
-  //   }
-
-  //   // compare the redacted image to the original image
-  //   if (Image.equals(redactedImage, originalImage)) {
-  //     this.isValid.set(Bool(true));
-  //   }
-  // }
+  @method checkGrayscaleValid(
+    originalImageInstance: Image,
+    redactedImageInstance: Image
+  ) {
+    // apply the ops to the original image
+    const originalImage = originalImageInstance;
+    const redactedImage = redactedImageInstance;
+    for (let i = 0; i < originalImage.pixel.length; i++) {
+      for (let j = 0; j < originalImage.pixel[i].length; j++) {
+        const gray = originalImage.pixel[i][j].r
+          .mul(UInt32.from(30))
+          .add(originalImage.pixel[i][j].g.mul(UInt32.from(59)))
+          .add(originalImage.pixel[i][j].b.mul(UInt32.from(11)));
+        gray.equals(redactedImage.pixel[i][j].r.mul(UInt32.from(100)));
+      }
+    }
+    this.isValid.set(Bool(true));
+  }
 }
