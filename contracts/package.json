@@ -39,7 +39,7 @@
     "o1js": "^0.15.0"
   },
   "dependencies": {
-    "exiftool-vendored": "^24.1.0",
-    "jimp": "^0.22.10"
+    "exif-be-gone": "^1.4.1",
+    "sharp": "^0.33.0"
   }
 }
