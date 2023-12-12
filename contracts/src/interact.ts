@@ -14,7 +14,7 @@
  */
 import fs from 'fs/promises';
 import { Mina, PrivateKey } from 'o1js';
-import { Add } from './Add.js';
+import { ImageTransform } from './imageTransform';
 
 // check command line arg
 let deployAlias = process.argv[2];
@@ -58,17 +58,18 @@ const fee = Number(config.fee) * 1e9; // in nanomina (1 billion = 1.0 mina)
 Mina.setActiveInstance(Network);
 let feepayerAddress = feepayerKey.toPublicKey();
 let zkAppAddress = zkAppKey.toPublicKey();
-let zkApp = new Add(zkAppAddress);
+let zkApp = new ImageTransform(zkAppAddress);
 
 let sentTx;
 // compile the contract to create prover keys
 console.log('compile the contract...');
-await Add.compile();
+await ImageTransform.compile();
 try {
   // call update() and send transaction
   console.log('build transaction and create proof...');
   let tx = await Mina.transaction({ sender: feepayerAddress, fee }, () => {
-    zkApp.update();
+    // TODO: import redactedImageInstance and ops from somewhere
+    // zkApp.update();
   });
   await tx.prove();
   console.log('send transaction...');
