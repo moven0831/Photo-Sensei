@@ -8,7 +8,7 @@ export default function useContract() {
     useEffect(() => {
         (async () => {
             const zkAppKey = zkAppAddress as unknown as PublicKey;
-            const { ImageTransform } = await import("../../../contracts/build/src/");
+            const { ImageTransform } = await import("../../../contracts/build/src");
             const newContract = new ImageTransform(zkAppKey);
             setContract(newContract);
         })();

@@ -1,31 +1,47 @@
+"use client";
 import Head from "next/head";
 import GradientBG from "../components/GradientBG.js";
 import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
-import { useEffect, useState } from "react";
-import { Mina, PublicKey } from "o1js";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useContract from "../hooks/useContract.tsx";
+import { useState } from "react";
+import { Mina } from "o1js";
+import { ImageServices } from "../services/imageServices.ts";
+// const sendImage = async (image: File, operation: string, contract: any) => {
+//     const tx = await Mina.transaction(() => {
+//         // TODO: implement this
+//     });
+//     await tx.prove();
+//     const { hash } = await window.mina.sendTransaction({
+//         transaction: tx.toJSON(),
+//         feePayer: {
+//             fee: "0.1",
+//             memo: "zk",
+//         },
+//     });
+//     console.log(hash);
+// };
+// const handleImage = (image: File) => {
+//     // TODO: image processing
+//     return image;
+// };
+
+function prove(image: File) {
+    const imageServices = new ImageServices();
+    // imageServices.crop(image, "", 100, 100);
+    const reader = new FileReader();
+    reader.readAsArrayBuffer(image);
+    reader.onloadend = () => {
+        console.log(reader.result);
+    };
+}
+
 export default function Home() {
     useMinaWallet();
     const [image, setImage] = useState<File | null>(null);
     const [operation, setOperation] = useState<string>("grayscale");
     const contract = useContract();
-
-    const sendImage = async (image: File, operation: string) => {
-        const tx = await Mina.transaction(() => {
-            // TODO: implement this
-        });
-        await tx.prove();
-        const { hash } = await window.mina.sendTransaction({
-            transaction: tx.toJSON(),
-            feePayer: {
-                fee: "",
-                memo: "zk",
-            },
-        });
-        console.log(hash);
-    };
 
     return (
         <>
@@ -40,7 +56,7 @@ export default function Home() {
                     onSubmit={async (e) => {
                         e.preventDefault();
                         console.log(image, operation);
-                        sendImage(image!, operation!);
+                        prove(image!);
                     }}
                 >
                     <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
