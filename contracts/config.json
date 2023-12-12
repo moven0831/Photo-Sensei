@@ -1,4 +1,13 @@
 {
   "version": 1,
-  "deployAliases": {}
+  "deployAliases": {
+    "photosensei": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/photosensei.json",
+      "feepayerKeyPath": "/home/moven0831/.cache/zkapp-cli/keys/firsttimemina.json",
+      "feepayerAlias": "firsttimemina",
+      "fee": "0.1",
+      "smartContract": "ImageTransform"
+    }
+  }
 }
