@@ -16,6 +16,14 @@
       "feepayerAlias": "firsttimemina",
       "fee": "0.1",
       "smartContract": "ImageTransform"
+    },
+    "test": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/test.json",
+      "feepayerKeyPath": "/home/moven0831/.cache/zkapp-cli/keys/firsttimemina.json",
+      "feepayerAlias": "firsttimemina",
+      "fee": "0.1",
+      "smartContract": "ImageTransform"
     }
   }
 }
