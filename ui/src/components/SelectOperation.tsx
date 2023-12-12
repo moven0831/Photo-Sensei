@@ -2,7 +2,7 @@ import { Dispatch, SetStateAction } from "react";
 
 interface SelectOperationProps {
     operation: string | null;
-    setOperation: Dispatch<SetStateAction<string | null>>;
+    setOperation: Dispatch<SetStateAction<string>>;
 }
 
 export default function SelectOperation(props: SelectOperationProps) {
