@@ -1,4 +1,4 @@
-@font-face {
+/* @font-face {
   font-family: 'ABC Monument Grotesk';
   font-style: normal;
   font-weight: normal;
@@ -46,4 +46,8 @@ body {
 a {
   color: inherit;
   text-decoration: none;
-}
+} */
+
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
