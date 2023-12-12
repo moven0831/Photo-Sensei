@@ -2,7 +2,7 @@
 
 <div align="center">
   <a href="https://github.com/moven0831/Photo-Sensei/tree/main/">
-    <img src="contracts/src/assets/sensei.jpg" alt="Photo-Sensei" width="80" height="80">
+    <img src="contracts/src/assets/sensei.jpg" alt="Photo-Sensei" width="120" height="120">
   </a>
 </div>
 
