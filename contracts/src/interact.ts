@@ -1,5 +1,5 @@
 /**
- * This script can be used to interact with the Add contract, after deploying it.
+ * This script can be used to interact with the contract, after deploying it.
  *
  * We call the update() method on the contract, create a proof and send it to the chain.
  * The endpoint that we interact with is read from your config.json.
@@ -69,9 +69,12 @@ try {
   console.log('build transaction and create proof...');
   let tx = await Mina.transaction({ sender: feepayerAddress, fee }, () => {
     // TODO: import redactedImageInstance and ops from somewhere
-    // zkApp.update();
+    zkApp.deploy();
+    zkApp.update();
+    // zkApp.checkGrayscaleValid();
   });
-  await tx.prove();
+  let proof = await tx.prove();
+  console.log(proof);
   console.log('send transaction...');
   sentTx = await tx.sign([feepayerKey]).send();
 } catch (err) {
