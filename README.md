@@ -18,6 +18,9 @@ In this very first stage, our code achieved the following
 2. Ensured that the digital signature of C2PA-enabled images remains verifiable even after image post-processing.
 3. Made the generated ZKP verifiable on-chain, affirming the accuracy of image post-processing.
 
+| ![Flow of Photo Sensei](https://github.com/moven0831/Photo-Sensei/assets/60170228/0c41d907-91c0-4258-b92a-7a8f6006767e) | 
+|:--:| 
+| *Expected flow of Photo Sensei* |
 
 ### :rocket: Roadmaps
 Our roadmap will leverage more powerful crypto primitives includes
@@ -36,3 +39,7 @@ How to start the web server
 ```sh
 npm run dev
 ```
+
+| ![Flow of Photo Sensei](https://github.com/moven0831/Photo-Sensei/assets/60170228/8b2cc542-1e04-458c-92d6-e8ed483fc538) | 
+|:--:| 
+| *Overall structure and Roadmap* |
