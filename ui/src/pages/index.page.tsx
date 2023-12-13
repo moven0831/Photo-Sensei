@@ -26,8 +26,10 @@ interface zkPixels {
     pixel: zkPixel[][];
 }
 const sendImage = async (contract: any, image: zkPixels, imageModified: zkPixels) => {
-    console.log(Mina);
-    console.log(contract)
+    if (!contract) {
+        window.alert("Contract not loaded");
+        return;
+    }
     const tx = await Mina.transaction(() => {
         contract.checkGrayscaleValid(image, imageModified);
     });
@@ -58,7 +60,7 @@ export default function Home() {
     useMinaWallet();
     const [image, setImage] = useState<File | null>(null);
     const [operation, setOperation] = useState<string>("grayscale");
-    const contract = useContract();
+    const { contract, isLoading } = useContract();
 
     return (
         <>
@@ -82,6 +84,11 @@ export default function Home() {
                     <button className="bg-white w-fit mt-10 m-auto text-gray-600 border-2 border-gray-300 font-medium rounded-lg text-sm py-1 px-5 text-center hover:bg-slate-50">
                         Submit
                     </button>
+                    {isLoading && (
+                        <div className="m-auto mt-10 text-end font-bold text-sm font-mono text-gray-700">
+                            Loading Contract...
+                        </div>
+                    )}
                 </form>
             </GradientBG>
         </>
