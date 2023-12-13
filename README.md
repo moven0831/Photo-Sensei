@@ -22,10 +22,6 @@ In this very first stage, our code achieved the following
 |:--:| 
 | *Expected flow of Photo Sensei* |
 
-| ![Flow of Photo Sensei](https://github.com/moven0831/Photo-Sensei/assets/60170228/0c41d907-91c0-4258-b92a-7a8f6006767e) | 
-|:--:| 
-| *Overall structure of Photo Sensei* |
-
 ### :rocket: Roadmaps
 Our roadmap will leverage more powerful crypto primitives includes
 1. Support recursive verification for image edits after the initial proof generation.
@@ -43,3 +39,7 @@ How to start the web server
 ```sh
 npm run dev
 ```
+
+| ![Flow of Photo Sensei](https://github.com/moven0831/Photo-Sensei/assets/60170228/8b2cc542-1e04-458c-92d6-e8ed483fc538) | 
+|:--:| 
+| *Overall structure and Roadmap* |
