@@ -27,6 +27,7 @@ interface zkPixels {
 }
 const sendImage = async (contract: any, image: zkPixels, imageModified: zkPixels) => {
     console.log(Mina);
+    console.log(contract)
     const tx = await Mina.transaction(() => {
         contract.checkGrayscaleValid(image, imageModified);
     });
