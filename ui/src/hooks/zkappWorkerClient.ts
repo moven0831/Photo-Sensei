@@ -30,7 +30,7 @@ export default class ZkappWorkerClient {
         });
     }
 
-    async getNum(): Promise<Field> {
+    async getIsValid(): Promise<Field> {
         const result = await this._call("getIsValid", {});
         return Field.fromJSON(JSON.parse(result as string));
     }
