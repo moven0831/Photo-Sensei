@@ -1,15 +1,25 @@
 import { PublicKey } from "o1js";
 import { useEffect, useState } from "react";
+import ZkappWorkerClient from "./zkappWorkerClient";
 
 export default function useContract() {
     const [contract, setContract] = useState<any>(null); // contract instance
-    const zkAppAddress = "B62qnxE3BZK3ZTzZoxoZZMFvFsyJduYESeyd5g9wnYNk4gBzft4KkNk";
 
     useEffect(() => {
         (async () => {
-            const zkAppKey = zkAppAddress as unknown as PublicKey;
+            // const zkAppKey = zkAppAddress;
+            const zkAppAddress = PublicKey.fromBase58("B62qinDpyhemL8P7MR4wrugqKYG9EC4s5PZZSkwGbBKsdoi3FopEdnk");
+            // const zkAppKey = new PublicKey(zkAppAddress, "base58check");
             const { ImageTransform } = await import("../../../contracts/build/src");
-            const newContract = new ImageTransform(zkAppKey);
+            await ImageTransform.compile();
+            const client = new ZkappWorkerClient();
+            client.setActiveInstanceToBerkeley();
+            const res = await client.fetchAccount({
+                publicKey: zkAppAddress,
+            });
+            await client.loadContract();
+            client.compileContract();
+            const newContract = new ImageTransform(zkAppAddress);
             setContract(newContract);
         })();
     }, [setContract]);

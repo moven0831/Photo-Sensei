@@ -7,36 +7,50 @@ import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useContract from "../hooks/useContract.tsx";
 import { useState } from "react";
 import { Mina } from "o1js";
-// const sendImage = async (image: File, operation: string, contract: any) => {
-//     const tx = await Mina.transaction(() => {
-//         // TODO: implement this
-//     });
-//     await tx.prove();
-//     const { hash } = await window.mina.sendTransaction({
-//         transaction: tx.toJSON(),
-//         feePayer: {
-//             fee: "0.1",
-//             memo: "zk",
-//         },
-//     });
-//     console.log(hash);
-// };
-// const handleImage = (image: File) => {
-//     // TODO: image processing
-//     return image;
-// };
+import { Struct, UInt32 } from "o1js";
 
-async function prove(image: File) {
-    // imageServices.crop(image, "", 100, 100);
-    fetch("http://localhost:3001/crop", {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
+class zkPixel extends Struct({
+    r: UInt32,
+    g: UInt32,
+    b: UInt32,
+}) {
+    static default() {
+        return new zkPixel({
+            r: UInt32.from(0),
+            g: UInt32.from(0),
+            b: UInt32.from(0),
+        });
+    }
+}
+interface zkPixels {
+    pixel: zkPixel[][];
+}
+const sendImage = async (contract: any, image: zkPixels, imageModified: zkPixels) => {
+    console.log(Mina);
+    const tx = await Mina.transaction(() => {
+        contract.checkGrayscaleValid(image, imageModified);
+    });
+    await tx.prove();
+    const { hash } = await window.mina.sendTransaction({
+        transaction: tx.toJSON(),
+        feePayer: {
+            fee: "0.1",
+            memo: "zk",
         },
-        body: image,
-    })
-        .then((res) => res.json())
-        .then((res) => console.log(res));
+    });
+    console.log(hash);
+};
+
+function handleImage(image: File): zkPixels {
+    const croppedImage = [];
+    for (let i = 0; i < 10; i++) {
+        const row: zkPixel[] = [];
+        for (let j = 0; j < 10; j++) {
+            row.push(zkPixel.default());
+        }
+        croppedImage.push(row);
+    }
+    return { pixel: croppedImage };
 }
 
 export default function Home() {
@@ -57,8 +71,8 @@ export default function Home() {
                     className="flex flex-col m-auto w-fit mt-10"
                     onSubmit={async (e) => {
                         e.preventDefault();
-                        console.log(image, operation);
-                        await prove(image!);
+                        const img = handleImage(image!);
+                        sendImage(contract, img, img);
                     }}
                 >
                     <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
