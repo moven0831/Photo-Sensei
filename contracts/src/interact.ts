@@ -1,5 +1,5 @@
 /**
- * This script can be used to interact with the Add contract, after deploying it.
+ * This script can be used to interact with the contract, after deploying it.
  *
  * We call the update() method on the contract, create a proof and send it to the chain.
  * The endpoint that we interact with is read from your config.json.
@@ -14,7 +14,7 @@
  */
 import fs from 'fs/promises';
 import { Mina, PrivateKey } from 'o1js';
-import { Add } from './Add.js';
+import { ImageTransform } from './imageTransform.js';
 
 // check command line arg
 let deployAlias = process.argv[2];
@@ -58,19 +58,23 @@ const fee = Number(config.fee) * 1e9; // in nanomina (1 billion = 1.0 mina)
 Mina.setActiveInstance(Network);
 let feepayerAddress = feepayerKey.toPublicKey();
 let zkAppAddress = zkAppKey.toPublicKey();
-let zkApp = new Add(zkAppAddress);
+let zkApp = new ImageTransform(zkAppAddress);
 
 let sentTx;
 // compile the contract to create prover keys
 console.log('compile the contract...');
-await Add.compile();
+await ImageTransform.compile();
 try {
   // call update() and send transaction
   console.log('build transaction and create proof...');
   let tx = await Mina.transaction({ sender: feepayerAddress, fee }, () => {
+    // TODO: import redactedImageInstance and ops from somewhere
+    zkApp.deploy();
     zkApp.update();
+    // zkApp.checkGrayscaleValid();
   });
-  await tx.prove();
+  let proof = await tx.prove();
+  console.log(proof);
   console.log('send transaction...');
   sentTx = await tx.sign([feepayerKey]).send();
 } catch (err) {

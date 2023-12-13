@@ -1,3 +1,2 @@
-import { Add } from './Add.js';
-
-export { Add };
+import { ImageTransform } from './imageTransform.js';
+export { ImageTransform };

@@ -1,4 +1,29 @@
 {
   "version": 1,
-  "deployAliases": {}
+  "deployAliases": {
+    "123": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/123.json",
+      "feepayerKeyPath": "/Users/spockwall/.cache/zkapp-cli/keys/123.json",
+      "feepayerAlias": "123",
+      "fee": "0.1",
+      "smartContract": "ImageTransform"
+    },
+    "photosensei": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/photosensei.json",
+      "feepayerKeyPath": "/home/moven0831/.cache/zkapp-cli/keys/firsttimemina.json",
+      "feepayerAlias": "firsttimemina",
+      "fee": "0.1",
+      "smartContract": "ImageTransform"
+    },
+    "test": {
+      "url": "https://proxy.berkeley.minaexplorer.com/graphql",
+      "keyPath": "keys/test.json",
+      "feepayerKeyPath": "/home/moven0831/.cache/zkapp-cli/keys/firsttimemina.json",
+      "feepayerAlias": "firsttimemina",
+      "fee": "0.1",
+      "smartContract": "ImageTransform"
+    }
+  }
 }
