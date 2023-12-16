@@ -8,6 +8,9 @@
 
 Photo Sensei is a ZK auth package designed for images on publishing platforms, focused on ensuring image integrity by leveraging Mina Protocol.
 
+> [!NOTE]
+> Check the `dev` branch for further features and debugged demo
+
 
 ### :pencil: Details
 Photo Sensei aim to build a package for publishing platforms such as [Medium](https://medium.com/) and [Mirror](https://mirror.xyz/) to enhance content authenticity. With the help of sensei, content creators can generate ZKP and provide verification for redacted [C2PA-enabled](https://c2pa.org/) images in their articles. This open standard providing creators and viewers the ability to trace the origin of different types of media. That is, content viewers can ensure that the redacted images they view are derived from the original photo and that the metadata matches the original. This process guarantees image integrity while preventing any inference of new information from the redacted images and proofs. Therefore, if the redacted images are verified, viewers can be confident that what they are seeing has not been sourced from tampered material, such as unauthorized edited photos or deepfake creations.
@@ -30,13 +33,17 @@ Our roadmap will leverage more powerful crypto primitives includes
 
 
 ### Get Started
-How to build
+1. use zkApp client to deploy contracts on `Berkeley` testnet
 ```sh
-npm run build
+npm i
+npm update -g zkapp-cli
+zk config
+zk deploy
 ```
 
-How to start the web server
+2. Run the UI and interact with deployed contracts
 ```sh
+npm i
 npm run dev
 ```
 
