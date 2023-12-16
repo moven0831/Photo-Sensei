@@ -1,5 +1,5 @@
-import { fetchAccount, PublicKey, Field } from "o1js";
-
+import { fetchAccount, PublicKey, Field, Struct, UInt32 } from "o1js";
+import type { zkPixels } from "../types/zkPixel"
 import type { ZkappWorkerRequest, ZkappWorkerReponse, WorkerFunctions } from "./zkappWorker.ts";
 
 export default class ZkappWorkerClient {
@@ -35,8 +35,8 @@ export default class ZkappWorkerClient {
         return Field.fromJSON(JSON.parse(result as string));
     }
 
-    createUpdateTransaction() {
-        return this._call("createUpdateTransaction", {});
+    createUpdateTransaction(image: zkPixels, imageModified: zkPixels) {
+        return this._call("createUpdateTransaction", { image: image, imageModified: imageModified });
     }
 
     proveUpdateTransaction() {

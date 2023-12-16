@@ -5,44 +5,41 @@ import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useContract from "../hooks/useContract.tsx";
+import ZkappWorkerClient from "../hooks/zkappWorkerClient";
 import { useState } from "react";
-import { Mina } from "o1js";
-import { Struct, UInt32 } from "o1js";
+import { PublicKey } from "o1js";
+import { zkPixel, zkPixels } from "../types/zkPixel"
 
-class zkPixel extends Struct({
-    r: UInt32,
-    g: UInt32,
-    b: UInt32,
-}) {
-    static default() {
-        return new zkPixel({
-            r: UInt32.from(0),
-            g: UInt32.from(0),
-            b: UInt32.from(0),
-        });
-    }
-}
-interface zkPixels {
-    pixel: zkPixel[][];
-}
-const sendImage = async (contract: any, image: zkPixels, imageModified: zkPixels) => {
-    if (!contract) {
+
+const sendImage = async (
+    client: ZkappWorkerClient,
+    publicKey: PublicKey,
+    image: zkPixels,
+    imageModified: zkPixels
+) => {
+    if (!client) {
         window.alert("Contract not loaded");
         return;
     }
-    console.log("Current contract", contract);
-    const tx = await Mina.transaction(() => {
-        contract.checkGrayscaleValid(image, imageModified);
+    console.log("Current client", client);
+    await client!.fetchAccount({
+        publicKey: publicKey!,
     });
-    await tx.prove();
-    const { hash } = await window.mina.sendTransaction({
-        transaction: tx.toJSON(),
+    await client!.createUpdateTransaction(
+        image,
+        imageModified
+    );
+    await client!.proveUpdateTransaction();
+    const transactionJSON = await client!.getTransactionJSON();
+    const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
         feePayer: {
-            fee: "0.1",
-            memo: "zk",
+            fee: 1,
+            memo: "",
         },
     });
-    console.log(hash);
+    const transactionLink = `https://berkeley.minaexplorer.com/transaction/${hash}`;
+    console.log(transactionLink);
 };
 
 function handleImage(image: File): zkPixels {
@@ -61,7 +58,7 @@ export default function Home() {
     useMinaWallet();
     const [image, setImage] = useState<File | null>(null);
     const [operation, setOperation] = useState<string>("grayscale");
-    const { contract, isLoading } = useContract();
+    const { client, isLoading, publicKey } = useContract();
 
     return (
         <>
@@ -76,12 +73,21 @@ export default function Home() {
                     onSubmit={async (e) => {
                         e.preventDefault();
                         const img = handleImage(image!);
-                        sendImage(contract, img, img);
+                        if (!publicKey || !client) {
+                            window.alert("Wallet not connected");
+                            return;
+                        }
+                        sendImage(client, publicKey, img, img);
                     }}
                 >
-                    <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
+                    <div className="m-auto font-bold text-3xl font-mono text-gray-700">
+                        Photo Sensei
+                    </div>
                     <InputFile image={image} setImage={setImage}></InputFile>
-                    <SelectOperation operation={operation} setOperation={setOperation}></SelectOperation>
+                    <SelectOperation
+                        operation={operation}
+                        setOperation={setOperation}
+                    ></SelectOperation>
                     <button className="bg-white w-fit mt-10 m-auto text-gray-600 border-2 border-gray-300 font-medium rounded-lg text-sm py-1 px-5 text-center hover:bg-slate-50">
                         Submit
                     </button>
