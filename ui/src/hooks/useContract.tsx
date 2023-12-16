@@ -8,23 +8,46 @@ export default function useContract() {
 
     useEffect(() => {
         (async () => {
-            const zkAppAddress = PublicKey.fromBase58("B62qinDpyhemL8P7MR4wrugqKYG9EC4s5PZZSkwGbBKsdoi3FopEdnk");
             const { ImageTransform } = await import("../../../contracts/build/src");
+            
+            // if (mina == null) {
+                //   setState({ ...state, hasWallet: false });
+                //   return;
+                // }
+                
+                
             const client = new ZkappWorkerClient();
-            setIsLoading(true);
-            await client.initZkappInstance(zkAppAddress);
-            const currentNum = await client.getIsValid();
-            console.log("client", currentNum);
             client.setActiveInstanceToBerkeley();
+            
+            const mina = (window as any).mina;
+            const publicKeyBase58: string = (await mina.requestAccounts())[0];
+            const publicKey = PublicKey.fromBase58(publicKeyBase58);
+            console.log(`Using key:${publicKey.toBase58()}`);
+            
             const res = await client.fetchAccount({
-                publicKey: zkAppAddress,
+                publicKey: publicKey,
             });
-            await client.loadContract();
-            await client.compileContract();
             console.log("client", res);
-            const newContract = new ImageTransform(zkAppAddress);
+            
+            setIsLoading(true);
+            console.log("loading contract");
+            await client.loadContract();
+            console.log("successfully loading contract");
+            console.log("compiling contract");
+            await client.compileContract();
+            console.log("successfully compiling contract");
+            
+            const ZKAPP_ADDRESS = "B62qinDpyhemL8P7MR4wrugqKYG9EC4s5PZZSkwGbBKsdoi3FopEdnk";
+            const zkappPublicKey = PublicKey.fromBase58(ZKAPP_ADDRESS);
+            await client.initZkappInstance(zkappPublicKey);
+            await client.fetchAccount({ publicKey: zkappPublicKey });
+            const currentStatus = await client.getIsValid();
+            console.log(`Current state in zkApp: ${currentStatus.toString()}`);
+
+            const newContract = new ImageTransform(zkappPublicKey);
             setContract(newContract);
             setIsLoading(false);
+            console.log("succefully loading contract", newContract);
         })();
     }, [setContract]);
 
