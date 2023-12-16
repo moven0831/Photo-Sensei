@@ -30,6 +30,7 @@ const sendImage = async (contract: any, image: zkPixels, imageModified: zkPixels
         window.alert("Contract not loaded");
         return;
     }
+    console.log("Current contract", contract);
     const tx = await Mina.transaction(() => {
         contract.checkGrayscaleValid(image, imageModified);
     });
@@ -65,7 +66,7 @@ export default function Home() {
     return (
         <>
             <Head>
-                <title>Mina zkApp UI</title>
+                <title>Photo Sensei</title>
                 <meta name="description" content="built with o1js" />
                 <link rel="icon" href="/assets/favicon.ico" />
             </Head>
