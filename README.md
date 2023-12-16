@@ -30,13 +30,17 @@ Our roadmap will leverage more powerful crypto primitives includes
 
 
 ### Get Started
-How to build
+1. use zkApp client to deploy contracts on `Berkeley` testnet
 ```sh
-npm run build
+npm i
+npm update -g zkapp-cli
+zk config
+zk deploy
 ```
 
-How to start the web server
+2. Run the UI and interact with deployed contracts
 ```sh
+npm i
 npm run dev
 ```
 
