@@ -4,7 +4,7 @@ import GradientBG from "../components/GradientBG.js";
 import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
-import useContract from "../hooks/useContract.tsx";
+import useContract from "../hooks/useClient.tsx";
 import ZkappWorkerClient from "../hooks/zkappWorkerClient";
 import { useState } from "react";
 import { PublicKey } from "o1js";
@@ -56,9 +56,9 @@ function handleImage(image: File): zkPixels {
 
 export default function Home() {
     useMinaWallet();
+    const { client, isLoading, publicKey } = useContract();
     const [image, setImage] = useState<File | null>(null);
     const [operation, setOperation] = useState<string>("grayscale");
-    const { client, isLoading, publicKey } = useContract();
 
     return (
         <>

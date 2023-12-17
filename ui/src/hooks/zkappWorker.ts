@@ -5,14 +5,13 @@ type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 // ---------------------------------------------------------------------------------------
 
 import type { ImageTransform } from "../../../contracts/src/imageTransform.js";
-import type { zkPixels } from "../types/zkPixel"
+import type { zkPixels } from "../types/zkPixel";
 
 const state = {
     ImageTransform: null as null | typeof ImageTransform,
     zkapp: null as null | ImageTransform,
     transaction: null as null | Transaction,
 };
-
 
 // ---------------------------------------------------------------------------------------
 
@@ -40,10 +39,15 @@ const functions = {
     },
     getIsValid: async (args: {}) => {
         const isValid = state.zkapp!.isValid.get() ? 1 : 0;
-        return JSON.stringify(isValid);
+        return isValid.toString();
     },
-    createUpdateTransaction: async (args: { image: zkPixels, imageModified: zkPixels }) => {
-        console.log("send Tx...")
+    createUpdateTransaction: async (args: { image: zkPixels; imageModified: zkPixels }) => {
+        console.log("send Tx...");
+        if (!state.zkapp) {
+            throw new Error("zkapp not initialized");
+        } else {
+            console.log(state.zkapp.checkGrayscaleValid);
+        }
         const transaction = await Mina.transaction(() => {
             const res = state.zkapp!.checkGrayscaleValid(args.image, args.imageModified);
             console.log(res);
