@@ -9,8 +9,8 @@
 Photo Sensei is a ZK auth package designed for images on publishing platforms, focused on ensuring image integrity by leveraging Mina Protocol.
 
 > [!NOTE]
-> Check the [`dev`](https://github.com/moven0831/Photo-Sensei/tree/dev) branch for further features and debugged demo
-> [Project Slides](https://www.canva.com/design/DAF3VKopFQc/1USkzc_Su2H8TehSfURd_Q/view?utm_content=DAF3VKopFQc&utm_campaign=designshare&utm_medium=link&utm_source=editor) | [Intro Video](https://youtu.be/-gEWSNs517U?si=ItHMj5BXEF1-zzdO)
+> Check the [`dev`](https://github.com/moven0831/Photo-Sensei/tree/dev) branch for further features and debugged demo\
+> :flashlight: [Project Slides](https://www.canva.com/design/DAF3VKopFQc/1USkzc_Su2H8TehSfURd_Q/view?utm_content=DAF3VKopFQc&utm_campaign=designshare&utm_medium=link&utm_source=editor) | :tv: [Intro Video](https://youtu.be/-gEWSNs517U?si=ItHMj5BXEF1-zzdO)
 
 
 ### :pencil: Details
