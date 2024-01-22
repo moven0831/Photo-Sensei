@@ -84,24 +84,6 @@ export default function GradientBG({ children }): JSX.Element {
         pixel.h.c += 0.005 * pixel.h.dir;
     }
 
-    function renderPixel(pixel) {
-        context.restore();
-
-        context.fillStyle = pixel.color.toString();
-        context.fillRect(pixel.x.c, pixel.y.c, pixel.w.c, pixel.h.c);
-    }
-
-    function paint() {
-        if (canvasRef.current) {
-            context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
-            for (let i = 0; i < pixels.length; i++) {
-                updatePixel(pixels[i]);
-
-                renderPixel(pixels[i]);
-            }
-        }
-    }
-
     useEffect(() => {
         if (canvasRef.current) {
             const canvas = canvasRef.current;
@@ -120,21 +102,32 @@ export default function GradientBG({ children }): JSX.Element {
     }, []);
 
     useEffect(() => {
+        function paint() {
+            if (canvasRef.current) {
+                context.clearRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                for (let i = 0; i < pixels.length; i++) {
+                    updatePixel(pixels[i]);
+                    renderPixel(pixels[i]);
+                }
+            }
+        }
+        function renderPixel(pixel) {
+            context.restore();
+            context.fillStyle = pixel.color.toString();
+            context.fillRect(pixel.x.c, pixel.y.c, pixel.w.c, pixel.h.c);
+        }
         let animationFrameId;
-
         if (context) {
             const animate = () => {
                 paint();
                 animationFrameId = window.requestAnimationFrame(animate);
             };
-
             animate();
         }
-
         return () => {
             window.cancelAnimationFrame(animationFrameId);
         };
-    }, [paint, pixels, context]);
+    }, [pixels, context]);
 
     return (
         <>
