@@ -40,6 +40,6 @@
   },
   "dependencies": {
     "exif-be-gone": "^1.4.1",
-    "sharp": "^0.33.0"
+    "jimp": "^0.22.10"
   }
 }
