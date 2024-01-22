@@ -6,47 +6,9 @@ import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useContract from "../hooks/useClient.tsx";
-import ZkappWorkerClient from "../services/zkappWorkerClient.ts";
 import ImageContainer from "../components/ImageContainer.tsx";
 import { useState } from "react";
-import { PublicKey } from "o1js";
-import { zkPixel, zkPixels } from "../types/zkPixel";
-
-const sendImage = async (client: ZkappWorkerClient, publicKey: PublicKey, image: zkPixels, imageModified: zkPixels) => {
-    if (!client) {
-        window.alert("Contract not loaded");
-        return;
-    }
-    console.log("Current client", client);
-    await client!.fetchAccount({
-        publicKey: publicKey!,
-    });
-    await client!.createUpdateTransaction(image, imageModified);
-    await client!.proveUpdateTransaction();
-    const transactionJSON = await client!.getTransactionJSON();
-    const { hash } = await (window as any).mina.sendTransaction({
-        transaction: transactionJSON,
-        feePayer: {
-            fee: 1,
-            memo: "",
-        },
-    });
-    const transactionLink = `https://berkeley.minaexplorer.com/transaction/${hash}`;
-    console.log(transactionLink);
-};
-
-function handleImage(image: File): zkPixels {
-    const croppedImage = [];
-    for (let i = 0; i < 10; i++) {
-        const row: zkPixel[] = [];
-        for (let j = 0; j < 10; j++) {
-            row.push(zkPixel.default());
-        }
-        croppedImage.push(row);
-    }
-    console.log(croppedImage);
-    return { pixel: croppedImage };
-}
+import { handleImage, sendImage } from "@/services/imageServices.ts";
 
 export default function Home() {
     useMinaWallet();
@@ -72,7 +34,8 @@ export default function Home() {
                                 window.alert("Wallet not connected");
                                 return;
                             }
-                            sendImage(client, publicKey, img, img);
+                            // temporary using same image for image and imageModified
+                            sendImage({ client, publicKey, image: img, imageModified: img });
                         }}
                     >
                         <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
