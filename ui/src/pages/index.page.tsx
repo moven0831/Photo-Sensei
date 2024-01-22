@@ -1,47 +1,38 @@
 "use client";
 import Head from "next/head";
+import Img from "next/image";
 import GradientBG from "../components/GradientBG.js";
 import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
-import useContract from "../hooks/useContract.tsx";
+import useContract from "../hooks/useClient.tsx";
+import ZkappWorkerClient from "../hooks/zkappWorkerClient";
+import ImageContainer from "../components/ImageContainer.tsx";
 import { useState } from "react";
-import { Mina } from "o1js";
-import { Struct, UInt32 } from "o1js";
+import { PublicKey } from "o1js";
+import { zkPixel, zkPixels } from "../types/zkPixel";
 
-class zkPixel extends Struct({
-    r: UInt32,
-    g: UInt32,
-    b: UInt32,
-}) {
-    static default() {
-        return new zkPixel({
-            r: UInt32.from(0),
-            g: UInt32.from(0),
-            b: UInt32.from(0),
-        });
-    }
-}
-interface zkPixels {
-    pixel: zkPixel[][];
-}
-const sendImage = async (contract: any, image: zkPixels, imageModified: zkPixels) => {
-    if (!contract) {
+const sendImage = async (client: ZkappWorkerClient, publicKey: PublicKey, image: zkPixels, imageModified: zkPixels) => {
+    if (!client) {
         window.alert("Contract not loaded");
         return;
     }
-    const tx = await Mina.transaction(() => {
-        contract.checkGrayscaleValid(image, imageModified);
+    console.log("Current client", client);
+    await client!.fetchAccount({
+        publicKey: publicKey!,
     });
-    await tx.prove();
-    const { hash } = await window.mina.sendTransaction({
-        transaction: tx.toJSON(),
+    await client!.createUpdateTransaction(image, imageModified);
+    await client!.proveUpdateTransaction();
+    const transactionJSON = await client!.getTransactionJSON();
+    const { hash } = await (window as any).mina.sendTransaction({
+        transaction: transactionJSON,
         feePayer: {
-            fee: "0.1",
-            memo: "zk",
+            fee: 1,
+            memo: "",
         },
     });
-    console.log(hash);
+    const transactionLink = `https://berkeley.minaexplorer.com/transaction/${hash}`;
+    console.log(transactionLink);
 };
 
 function handleImage(image: File): zkPixels {
@@ -53,43 +44,62 @@ function handleImage(image: File): zkPixels {
         }
         croppedImage.push(row);
     }
+    console.log(croppedImage);
     return { pixel: croppedImage };
 }
 
 export default function Home() {
     useMinaWallet();
+    const { client, isLoading, publicKey } = useContract();
     const [image, setImage] = useState<File | null>(null);
     const [operation, setOperation] = useState<string>("grayscale");
-    const { contract, isLoading } = useContract();
 
     return (
         <>
             <Head>
-                <title>Mina zkApp UI</title>
+                <title>Photo Sensei</title>
                 <meta name="description" content="built with o1js" />
                 <link rel="icon" href="/assets/favicon.ico" />
             </Head>
             <GradientBG>
-                <form
-                    className="flex flex-col m-auto w-fit mt-10"
-                    onSubmit={async (e) => {
-                        e.preventDefault();
-                        const img = handleImage(image!);
-                        sendImage(contract, img, img);
-                    }}
-                >
-                    <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
-                    <InputFile image={image} setImage={setImage}></InputFile>
-                    <SelectOperation operation={operation} setOperation={setOperation}></SelectOperation>
-                    <button className="bg-white w-fit mt-10 m-auto text-gray-600 border-2 border-gray-300 font-medium rounded-lg text-sm py-1 px-5 text-center hover:bg-slate-50">
-                        Submit
-                    </button>
-                    {isLoading && (
-                        <div className="m-auto mt-10 text-end font-bold text-sm font-mono text-gray-700">
-                            Loading Contract...
-                        </div>
-                    )}
-                </form>
+                <div className="flex flex-row m-auto w-4/5">
+                    <form
+                        className="flex flex-col m-16 w-fit mt-40"
+                        onSubmit={async (e) => {
+                            e.preventDefault();
+                            const img = handleImage(image!);
+                            if (!publicKey || !client) {
+                                window.alert("Wallet not connected");
+                                return;
+                            }
+                            sendImage(client, publicKey, img, img);
+                        }}
+                    >
+                        <div className="m-auto font-bold text-3xl font-mono text-gray-700">Photo Sensei</div>
+                        <InputFile image={image} setImage={setImage}></InputFile>
+                        <SelectOperation operation={operation} setOperation={setOperation}></SelectOperation>
+                        <button className="bg-white w-fit mt-10 m-auto text-gray-600 border-2 border-gray-300 font-medium rounded-lg text-sm py-1 px-5 text-center hover:bg-slate-50">
+                            Submit
+                        </button>
+                        {isLoading && (
+                            <div className="m-auto mt-10 text-end font-bold text-sm font-mono text-gray-700">
+                                Loading Contract...
+                            </div>
+                        )}
+                    </form>
+                    {/* photo preview */}
+                    <ImageContainer title="Image Preview">
+                        {image && (
+                            <Img
+                                src={URL.createObjectURL(image)}
+                                alt="Please select an image"
+                                width={0}
+                                height={0}
+                                style={{ width: "100%", height: "auto" }}
+                            />
+                        )}
+                    </ImageContainer>
+                </div>
             </GradientBG>
         </>
     );

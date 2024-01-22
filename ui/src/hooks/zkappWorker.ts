@@ -1,13 +1,14 @@
-import { Mina, PublicKey, fetchAccount } from "o1js";
+import { Field, Mina, PublicKey, fetchAccount, Struct, UInt32 } from "o1js";
 
 type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 
 // ---------------------------------------------------------------------------------------
 
 import type { ImageTransform } from "../../../contracts/src/imageTransform.js";
+import type { zkPixels } from "../types/zkPixel";
 
 const state = {
-    Add: null as null | typeof ImageTransform,
+    ImageTransform: null as null | typeof ImageTransform,
     zkapp: null as null | ImageTransform,
     transaction: null as null | Transaction,
 };
@@ -16,16 +17,17 @@ const state = {
 
 const functions = {
     setActiveInstanceToBerkeley: async (args: {}) => {
+        console.log("Creating Berkeley Instance");
         const Berkeley = Mina.Network("https://proxy.berkeley.minaexplorer.com/graphql");
         console.log("Berkeley Instance Created");
         Mina.setActiveInstance(Berkeley);
     },
     loadContract: async (args: {}) => {
         const { ImageTransform } = await import("../../../contracts/build/src/imageTransform.js");
-        state.Add = ImageTransform;
+        state.ImageTransform = ImageTransform;
     },
     compileContract: async (args: {}) => {
-        await state.Add!.compile();
+        await state.ImageTransform!.compile();
     },
     fetchAccount: async (args: { publicKey58: string }) => {
         const publicKey = PublicKey.fromBase58(args.publicKey58);
@@ -33,15 +35,22 @@ const functions = {
     },
     initZkappInstance: async (args: { publicKey58: string }) => {
         const publicKey = PublicKey.fromBase58(args.publicKey58);
-        state.zkapp = new state.Add!(publicKey);
+        state.zkapp = new state.ImageTransform!(publicKey);
     },
     getIsValid: async (args: {}) => {
-        const currentNum = state.zkapp!.isValid.get();
-        return JSON.stringify(currentNum.toJSON());
+        const isValid = state.zkapp!.isValid.get() ? 1 : 0;
+        return isValid.toString();
     },
-    createUpdateTransaction: async (args: {}) => {
+    createUpdateTransaction: async (args: { image: zkPixels; imageModified: zkPixels }) => {
+        console.log("send Tx...");
+        if (!state.zkapp) {
+            throw new Error("zkapp not initialized");
+        } else {
+            console.log(state.zkapp.checkGrayscaleValid);
+        }
         const transaction = await Mina.transaction(() => {
-            state.zkapp!.update();
+            const res = state.zkapp!.checkGrayscaleValid(args.image, args.imageModified);
+            console.log(res);
         });
         state.transaction = transaction;
     },
