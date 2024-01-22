@@ -1,5 +1,5 @@
-import { fetchAccount, PublicKey, Field, Struct, UInt32 } from "o1js";
-import type { zkPixels } from "../types/zkPixel.ts"
+import { fetchAccount, PublicKey, Field } from "o1js";
+import type { zkPixels } from "../types/zkPixel.ts";
 import type { ZkappWorkerRequest, ZkappWorkerReponse, WorkerFunctions } from "./zkappWorker.ts";
 
 export default class ZkappWorkerClient {
