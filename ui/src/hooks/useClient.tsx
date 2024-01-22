@@ -41,13 +41,7 @@ export default function useClient() {
             setIsLoading(false);
             console.log("succefully connect to client", client);
         };
-        if (localStorage.getItem("zkappClient")) {
-            setIsLoading(false);
-            setClient(JSON.parse(localStorage.getItem("zkappClient")!));
-            console.log("loading client from local storage");
-        } else {
-            loadClient();
-        }
+        loadClient();
     }, [setClient, setPublicKey, setIsLoading]);
 
     return { client, isLoading, publicKey };
