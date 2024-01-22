@@ -1,12 +1,13 @@
 "use client";
 import Head from "next/head";
 import Img from "next/image";
-import GradientBG from "../components/GradientBG.js";
+import GradientBG from "../components/GradientBG";
 import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useClient from "../hooks/useClient.tsx";
 import ImageContainer from "../components/ImageContainer.tsx";
+import './reactCOIServiceWorker';
 import { useState } from "react";
 import { handleImage, sendImage } from "@/services/imageServices.ts";
 
