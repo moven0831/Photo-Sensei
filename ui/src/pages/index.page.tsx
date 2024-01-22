@@ -5,14 +5,14 @@ import GradientBG from "../components/GradientBG.js";
 import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
-import useContract from "../hooks/useClient.tsx";
+import useClient from "../hooks/useClient.tsx";
 import ImageContainer from "../components/ImageContainer.tsx";
 import { useState } from "react";
 import { handleImage, sendImage } from "@/services/imageServices.ts";
 
 export default function Home() {
     useMinaWallet();
-    const { client, isLoading, publicKey } = useContract();
+    const { client, isLoading, publicKey } = useClient();
     const [image, setImage] = useState<File | null>(null);
     const [operation, setOperation] = useState<string>("grayscale");
 
