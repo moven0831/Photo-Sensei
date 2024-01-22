@@ -1,11 +1,11 @@
-import { Field, Mina, PublicKey, fetchAccount, Struct, UInt32 } from "o1js";
+import { Mina, PublicKey, fetchAccount } from "o1js";
 
 type Transaction = Awaited<ReturnType<typeof Mina.transaction>>;
 
 // ---------------------------------------------------------------------------------------
 
 import type { ImageTransform } from "../../../contracts/src/imageTransform.js";
-import type { zkPixels } from "../types/zkPixel";
+import type { zkPixels } from "../types/zkPixel.js";
 
 const state = {
     ImageTransform: null as null | typeof ImageTransform,

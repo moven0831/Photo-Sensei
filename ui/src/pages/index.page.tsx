@@ -6,7 +6,7 @@ import InputFile from "../components/InputFile.tsx";
 import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useContract from "../hooks/useClient.tsx";
-import ZkappWorkerClient from "../hooks/zkappWorkerClient";
+import ZkappWorkerClient from "../zkapps/zkappWorkerClient.ts";
 import ImageContainer from "../components/ImageContainer.tsx";
 import { useState } from "react";
 import { PublicKey } from "o1js";

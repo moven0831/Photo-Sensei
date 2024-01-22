@@ -1,6 +1,6 @@
 import { PublicKey } from "o1js";
 import { useEffect, useState } from "react";
-import ZkappWorkerClient from "./zkappWorkerClient";
+import ZkappWorkerClient from "../zkapps/zkappWorkerClient";
 
 export default function useContract() {
     const [client, setClient] = useState<ZkappWorkerClient | null>(null); // client instance
