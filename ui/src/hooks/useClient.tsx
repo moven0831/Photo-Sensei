@@ -6,11 +6,11 @@ export default function useClient() {
     const [client, setClient] = useState<ZkappWorkerClient | null>(null); // client instance
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [publicKey, setPublicKey] = useState<PublicKey | null>(null);
-
     useEffect(() => {
-        (async () => {
+        const loadClient = async () => {
+            setIsLoading(true);
             const client = new ZkappWorkerClient();
-            client.setActiveInstanceToBerkeley();
+            await client.setActiveInstanceToBerkeley();
 
             const mina = (window as any).mina;
             const publicKeyBase58: string = (await mina.requestAccounts())[0];
@@ -21,9 +21,7 @@ export default function useClient() {
             const res = await client.fetchAccount({
                 publicKey: publicKey,
             });
-            console.log("client", res);
-
-            setIsLoading(true);
+            console.log("account fetched, public key: ", publicKey);
             console.log("loading contract");
             await client.loadContract();
             console.log("successfully loading contract");
@@ -39,10 +37,18 @@ export default function useClient() {
             console.log(`Current state in zkApp: ${currentStatus.toString()}`);
 
             setClient(client);
+            console.log("client", client);
             setIsLoading(false);
             console.log("succefully connect to client", client);
-        })();
-    }, [setClient, setPublicKey]);
+        };
+        if (localStorage.getItem("zkappClient")) {
+            setIsLoading(false);
+            setClient(JSON.parse(localStorage.getItem("zkappClient")!));
+            console.log("loading client from local storage");
+        } else {
+            loadClient();
+        }
+    }, [setClient, setPublicKey, setIsLoading]);
 
     return { client, isLoading, publicKey };
 }
