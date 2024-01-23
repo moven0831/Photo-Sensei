@@ -13,14 +13,18 @@ export default function useClient() {
             await client.setActiveInstanceToBerkeley();
 
             const mina = (window as any).mina;
+            let cnt = 1;
+            setInterval(async () => {
+                console.log("fetching account", cnt++);
+            }, 1000);
             const publicKeyBase58: string = (await mina.requestAccounts())[0];
             const publicKey = PublicKey.fromBase58(publicKeyBase58);
             setPublicKey(publicKey);
             console.log(`Using key:${publicKey.toBase58()}`);
-
             const res = await client.fetchAccount({
                 publicKey: publicKey,
             });
+
             console.log("account fetched, public key: ", publicKey);
             console.log("loading contract");
             await client.loadContract();
