@@ -1,6 +1,7 @@
 import ZkappWorkerClient from "../services/zkappWorkerClient.ts";
 import { PublicKey } from "o1js";
 import { zkPixel, zkPixels } from "../types/zkPixel";
+import { toast } from "react-toastify";
 
 type sendImageArgs = {
     client: ZkappWorkerClient;
@@ -11,7 +12,7 @@ type sendImageArgs = {
 
 export const sendImage = async (args: sendImageArgs) => {
     if (!args.client) {
-        window.alert("Contract not loaded");
+        toast.error("Client not initialized");
         return;
     }
     console.log("Current client", args.client);

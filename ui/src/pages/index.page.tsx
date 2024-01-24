@@ -9,8 +9,8 @@ import useClient from "../hooks/useClient.tsx";
 import ImageContainer from "../components/ImageContainer.tsx";
 import { useState } from "react";
 import { handleImage, sendImage } from "@/services/imageServices.ts";
-import './reactCOIServiceWorker';
 import { toast, ToastContainer } from 'react-toastify';
+import './reactCOIServiceWorker';
 import 'react-toastify/dist/ReactToastify.css';
 
 
@@ -35,7 +35,7 @@ export default function Home() {
                             e.preventDefault();
                             const img = handleImage(image!);
                             if (!publicKey || !client) {
-                                window.alert("Wallet not connected");
+                                toast.error('Please ensure zkapp client is connected');
                                 return;
                             }
                             // temporary using same image for image and imageModified
