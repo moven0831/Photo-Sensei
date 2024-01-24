@@ -7,9 +7,12 @@ import SelectOperation from "../components/SelectOperation.tsx";
 import useMinaWallet from "../hooks/useMinaWallet.tsx";
 import useClient from "../hooks/useClient.tsx";
 import ImageContainer from "../components/ImageContainer.tsx";
-import './reactCOIServiceWorker';
 import { useState } from "react";
 import { handleImage, sendImage } from "@/services/imageServices.ts";
+import './reactCOIServiceWorker';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
+
 
 export default function Home() {
     useMinaWallet();
@@ -65,6 +68,7 @@ export default function Home() {
                     </ImageContainer>
                 </div>
             </GradientBG>
+            <ToastContainer />
         </>
     );
 }
