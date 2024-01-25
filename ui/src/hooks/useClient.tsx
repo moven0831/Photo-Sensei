@@ -14,16 +14,30 @@ export default function useClient() {
 
             const mina = (window as any).mina;
             let cnt = 1;
-            setInterval(async () => {
-                console.log("fetching account", cnt++);
-            }, 1000);
             const publicKeyBase58: string = (await mina.requestAccounts())[0];
             const publicKey = PublicKey.fromBase58(publicKeyBase58);
             setPublicKey(publicKey);
             console.log(`Using key:${publicKey.toBase58()}`);
-            const res = await client.fetchAccount({
-                publicKey: publicKey,
-            });
+
+            // Keep fetching the account until it exists
+            const fetchAccountWithTimeout = async () => {
+                const timeout = 5000; // Set your timeout duration here
+                const timer = setTimeout(() => {
+                    console.log('Timeout, fetching account again');
+                    fetchAccountWithTimeout();
+                }, timeout);
+    
+                try {
+                    const res = await client.fetchAccount({
+                        publicKey: publicKey,
+                    });
+                    clearTimeout(timer);
+                } catch (error) {
+                    console.log('Error fetching account:', error);
+                }
+            };
+    
+            await fetchAccountWithTimeout();
 
             console.log("account fetched, public key: ", publicKey);
             console.log("loading contract");
